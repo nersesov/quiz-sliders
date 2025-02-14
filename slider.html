@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Grade Sliders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .slider-container {
+            width: 500px;
+            margin: 20px auto;
+        }
+        .slider {
+            width: 100%;
+        }
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h2>Quiz Grade Sliders</h2>
+    <p><strong>Quiz Structure:</strong></p>
+    <p>Total Quiz Score: <b>10</b> | Number of Questions: <b>5</b></p>
+    <p>Student Scores: 2.0, 4.5, 7.0, 8.5, 10.0</p>
+    
+    <h3>Condition 1: Full Quiz Score</h3>
+    <div class="slider-container">
+        <input type="range" id="quizMin" class="slider" min="0" max="10" step="0.5" value="0">
+        <input type="range" id="quizMax" class="slider" min="0" max="10" step="0.5" value="10">
+        <div class="range-values">
+            <span id="quizMinLabel">0</span>
+            <span id="quizMaxLabel">10</span>
+        </div>
+    </div>
+    <div class="info">
+        <p>Excluded Attempts: <span class="highlight" id="quizExcludedLow">0</span> (left), <span class="highlight" id="quizExcludedHigh">0</span> (right)</p>
+        <p>Included Attempts: <span class="highlight" id="quizIncluded">5</span></p>
+    </div>
+    
+    <h3>Condition 2: Grade Item - Question 1 & 2 (Max 5 points)</h3>
+    <div class="slider-container">
+        <input type="range" id="giMin" class="slider" min="0" max="5" step="0.5" value="0">
+        <input type="range" id="giMax" class="slider" min="0" max="5" step="0.5" value="5">
+        <div class="range-values">
+            <span id="giMinLabel">0</span>
+            <span id="giMaxLabel">5</span>
+        </div>
+    </div>
+    <div class="info">
+        <p>Excluded Attempts: <span class="highlight" id="giExcludedLow">0</span> (left), <span class="highlight" id="giExcludedHigh">0</span> (right)</p>
+        <p>Included Attempts: <span class="highlight" id="giIncluded">5</span></p>
+    </div>
+
+    <script>
+        const quizMin = document.getElementById("quizMin");
+        const quizMax = document.getElementById("quizMax");
+        const quizMinLabel = document.getElementById("quizMinLabel");
+        const quizMaxLabel = document.getElementById("quizMaxLabel");
+        const quizExcludedLow = document.getElementById("quizExcludedLow");
+        const quizExcludedHigh = document.getElementById("quizExcludedHigh");
+        const quizIncluded = document.getElementById("quizIncluded");
+        
+        const giMin = document.getElementById("giMin");
+        const giMax = document.getElementById("giMax");
+        const giMinLabel = document.getElementById("giMinLabel");
+        const giMaxLabel = document.getElementById("giMaxLabel");
+        const giExcludedLow = document.getElementById("giExcludedLow");
+        const giExcludedHigh = document.getElementById("giExcludedHigh");
+        const giIncluded = document.getElementById("giIncluded");
+
+        const quizScores = [2.0, 4.5, 7.0, 8.5, 10.0];
+        const giScores = [1.0, 2.5, 3.5, 4.0, 5.0];
+
+        function updateSlider(minElem, maxElem, minLabel, maxLabel, excludedLow, excludedHigh, included, scores) {
+            let minValue = parseFloat(minElem.value);
+            let maxValue = parseFloat(maxElem.value);
+            if (minValue >= maxValue) {
+                minValue = maxValue - 0.5;
+                minElem.value = minValue;
+            }
+            minLabel.textContent = minValue;
+            maxLabel.textContent = maxValue;
+            let lowCount = scores.filter(score => score < minValue).length;
+            let highCount = scores.filter(score => score > maxValue).length;
+            let includedCount = scores.filter(score => score >= minValue && score <= maxValue).length;
+            excludedLow.textContent = lowCount;
+            excludedHigh.textContent = highCount;
+            included.textContent = includedCount;
+        }
+        
+        quizMin.addEventListener("input", () => updateSlider(quizMin, quizMax, quizMinLabel, quizMaxLabel, quizExcludedLow, quizExcludedHigh, quizIncluded, quizScores));
+        quizMax.addEventListener("input", () => updateSlider(quizMin, quizMax, quizMinLabel, quizMaxLabel, quizExcludedLow, quizExcludedHigh, quizIncluded, quizScores));
+        giMin.addEventListener("input", () => updateSlider(giMin, giMax, giMinLabel, giMaxLabel, giExcludedLow, giExcludedHigh, giIncluded, giScores));
+        giMax.addEventListener("input", () => updateSlider(giMin, giMax, giMinLabel, giMaxLabel, giExcludedLow, giExcludedHigh, giIncluded, giScores));
+
+        updateSlider(quizMin, quizMax, quizMinLabel, quizMaxLabel, quizExcludedLow, quizExcludedHigh, quizIncluded, quizScores);
+        updateSlider(giMin, giMax, giMinLabel, giMaxLabel, giExcludedLow, giExcludedHigh, giIncluded, giScores);
+    </script>
+</body>
+</html>
